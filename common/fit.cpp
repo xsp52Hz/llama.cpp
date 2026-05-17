@@ -63,7 +63,11 @@ static std::vector<llama_device_memory_data> common_get_device_memory_data(
         throw std::runtime_error("failed to load model");
     }
 
-    llama_context * ctx = llama_init_from_model(model, *cparams);
+    // use n_seq_max = 1 for fitting to avoid issues with models that perform per-sequence
+    // operations such as 1D convolutions (e.g. Zaya CCA attention)
+    llama_context_params cparams_fit = *cparams;
+    cparams_fit.n_seq_max = 1;
+    llama_context * ctx = llama_init_from_model(model, cparams_fit);
     if (ctx == nullptr) {
         llama_model_free(model);
         llama_log_set(ud.original_logger.callback, ud.original_logger.user_data);

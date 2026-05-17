@@ -30,6 +30,41 @@ LLM inference in C/C++
 
 ----
 
+## Zaya1 Branch
+
+This branch adds support for the [Zyphra/ZAYA1](https://huggingface.co/Zyphra/ZAYA1-8B) model architecture (CCA Convolutional Attention + Mixture of Experts).
+
+### Build (Windows + Vulkan)
+
+```sh
+cmake -B build -DGGML_VULKAN=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release -j16
+```
+
+### Run with ZAYA1 model
+
+```sh
+# Server mode (recommended)
+llama-server -m ZAYA1-8B-Q4_K_M.gguf --parallel 1 -ngl 99 --device Vulkan0
+
+# CLI mode
+llama-cli -m ZAYA1-8B-Q4_K_M.gguf -ngl 99
+```
+
+> **Important**: ZAYA1's CCA attention uses 1D convolutions that currently only support single-sequence processing. Always use `--parallel 1` with `llama-server`.
+
+### Known limitations
+
+- `llama-server` requires `--parallel 1` (batch conv1d not yet supported for multi-sequence)
+- `ggml_conv_1d_grouped` decomposes into grouped per-group conv1d calls (no fused kernel yet)
+- Large vocabulary (262K tokens) makes output projection memory-intensive
+
+### Upstream
+
+This branch tracks [ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp) `master` with Zaya architecture support added in `src/models/zaya.cpp`. Original PR: [#23112](https://github.com/ggerganov/llama.cpp/pull/23112).
+
+----
+
 ## Quick start
 
 Getting started with llama.cpp is straightforward. Here are several ways to install it on your machine:

@@ -20,6 +20,7 @@ target_link_libraries(${TARGET} PRIVATE Threads::Threads)
 
 if (WIN32 AND NOT MSVC)
     target_link_libraries(${TARGET} PUBLIC ws2_32)
+    target_compile_definitions(${TARGET} PUBLIC _WIN32_WINNT=0x0A00)
 endif()
 
 target_compile_features(${TARGET} PRIVATE cxx_std_17)

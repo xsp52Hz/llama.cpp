@@ -221,7 +221,7 @@ llama_model_zaya::graph::graph(const llama_model & model, const llm_graph_params
             ggml_tensor * cur_state_src = ggml_cont(ctx0, cur);
             ggml_tensor * cur_seq = ggml_reshape_3d(ctx0, cur_state_src, n_embd, n_seq_tokens, n_seqs);
 
-            ggml_tensor * hs_d = ggml_reshape_3d(ctx0, prev_hs, n_embd, 1, n_seqs);
+            ggml_tensor * hs_d = ggml_reshape_3d(ctx0, ggml_cont(ctx0, prev_hs), n_embd, 1, n_seqs);
             if (n_seq_tokens > 1) {
                 ggml_tensor * cur_shift = ggml_view_3d(ctx0, cur_seq, n_embd, n_seq_tokens - 1, n_seqs,
                         cur_seq->nb[1],
